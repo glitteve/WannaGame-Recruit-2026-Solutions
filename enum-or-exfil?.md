@@ -1,16 +1,16 @@
 # WannaGame-Recruit-2026-Solutions
 **Statement:** https://ctf.uithacking.club/training/6?challenge=27
 
-First of all, we're given a Packet Capture file (PCAP), there are lots of ICMP here.
+First of all, we're given a Packet Capture file (PCAP), there are lots of packets here.
 
 <img width="1767" height="1064" alt="Screenshot 2026-09-14 224018" src="https://github.com/user-attachments/assets/486c9d0e-df0d-4f01-b433-a585ba1e4684" />
 
 
-At the beginning of the inspection, there are multiple HTTP requests that contain outlandish information, which seems to be Base64.
+At the beginning of the inspection, there are multiple HTTP requests that contain outlandish information, which seems to be Base64. We need to decode those twice.
 
 <img width="1493" height="295" alt="Screenshot 2026-09-14 225126" src="https://github.com/user-attachments/assets/d16e979f-82af-4809-b07f-af1a74927ffc" />
 
-We will use `tshark` to capture all of the Base64-encoded data from conversation streams.
+We will use `tshark` to capture and encode twice all of the Base64-encoded data from conversation streams.
 
 ```bash
 $ tshark -r challenge.pcap -Y "http" -T fields -e http.authbasic | sed -e 's/firefly\://g' | base64 -d | file -
@@ -33,7 +33,7 @@ When we try clicking each ICMP packet, we can see suspicious data in it
 
 As we can see, every ICMP packet has a packet that includes the suspicious first 2 letters and the rest of repeated letters. Maybe the letters excepting first 2 letters, are not really important.
 
-We convert every 2 letters (representing two hex values) of all ICMP packets into ASCII values and merge all of it by using `tshark`.
+We convert every 2 letters (representing two hex values) of all ICMP packets into ASCII values and merge all of them using `tshark`.
 
 ```bash
 $ tshark -r challenge.pcap -Y "icmp" -T fields -e data.data | cut -c1-2 | uniq | xxd -r -p
