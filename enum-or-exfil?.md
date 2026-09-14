@@ -28,7 +28,7 @@ The file names `img.jpg` as we see:
 
 <img width="544" height="600" alt="img" src="https://github.com/user-attachments/assets/10543b51-ebca-4618-9e9d-b81c49ddeb98" />
 
-Is there any data or even a secret flag hidden in the picture? Let's inspect it. First, we use `binwalk -e img.jpg` and `exiftool img.jpg`, but there isn't any suspicious information. Next, we try inspecting it with `steghide extract -sf img.jpg` to extract encrypted secret data, but it requires us to have a passphrase to decrypt the secret data.
+Is there any data or even a secret flag hidden in the picture? Let's inspect it. First, we use `binwalk -e img.jpg`, `exiftool img.jpg` and so on, but there isn't any suspicious information. Next, we try inspecting it with `steghide extract -sf img.jpg` to extract encrypted secret data, but it requires us to have a passphrase to decrypt the secret data.
 
 How do we find this passphrase? Let's have a look at ICMP packets.<img width="1516" height="739" alt="Screenshot 2026-09-14 231030" src="https://github.com/user-attachments/assets/7efd4567-2d76-4c13-89bb-481df9da633f" />
 
