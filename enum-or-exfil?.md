@@ -23,7 +23,7 @@ The file names `img.jpg` as we see:
 
 <img width="544" height="600" alt="img" src="https://github.com/user-attachments/assets/10543b51-ebca-4618-9e9d-b81c49ddeb98" />
 
-Is there any secret data (or flag) hidden in the picture? Let's inspect it. First, we use `binwalk -e `
+Is there any data or even a secret flag hidden in the picture? Let's inspect it. First, we use `binwalk -e img.jpg` and `exiftool img.jpg`, but there isn't any suspicious information. Next, we try inspecting it with `steghide extract -sf img.jpg` to extract encrypted secret data, but it requires us to have a passphrase to decrypt the secret data.
 
 
 
