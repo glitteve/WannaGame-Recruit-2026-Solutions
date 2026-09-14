@@ -6,11 +6,16 @@ First of all, we're given a Packet Capture file (PCAP), there are lots of packet
 <img width="1767" height="1064" alt="Screenshot 2026-09-14 224018" src="https://github.com/user-attachments/assets/486c9d0e-df0d-4f01-b433-a585ba1e4684" />
 
 
-At the beginning of the inspection, there are multiple HTTP requests that contain outlandish information, which seems to be Base64. We need to decode those twice.
+At the beginning of the inspection, there are multiple HTTP requests that contain outlandish information, which seems to be Base64. We need to decode those twice. 
+Fortunately, when we inspect the first TCP conversation stream and decode this outlandish information twice, we discover the magic bytes of this: 
+
+<img width="502" height="161" alt="image" src="https://github.com/user-attachments/assets/8707c931-227d-4c7c-94a6-fdc2785286f9" />
+
+After that, we conclude that the data we need is in a picture format (JFIF).
 
 <img width="1493" height="295" alt="Screenshot 2026-09-14 225126" src="https://github.com/user-attachments/assets/d16e979f-82af-4809-b07f-af1a74927ffc" />
 
-We will use `tshark` to capture and encode twice all of the Base64-encoded data from conversation streams.
+We will use `tshark` to capture and encode twice all of the Base64-encoded data from conversation streams and merge them to create a full image.
 
 ```bash
 $ tshark -r challenge.pcap -Y "http" -T fields -e http.authbasic | sed -e 's/firefly\://g' | base64 -d | file -
