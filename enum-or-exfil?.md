@@ -25,7 +25,29 @@ The file names `img.jpg` as we see:
 
 Is there any data or even a secret flag hidden in the picture? Let's inspect it. First, we use `binwalk -e img.jpg` and `exiftool img.jpg`, but there isn't any suspicious information. Next, we try inspecting it with `steghide extract -sf img.jpg` to extract encrypted secret data, but it requires us to have a passphrase to decrypt the secret data.
 
+How do we find this passphrase? Let's have a look at ICMP packets.<img width="1516" height="739" alt="Screenshot 2026-09-14 231030" src="https://github.com/user-attachments/assets/7efd4567-2d76-4c13-89bb-481df9da633f" />
 
+When we try clicking each ICMP packet, we can see suspicious data in it
+
+<img width="937" height="278" alt="Screenshot 2026-09-14 231206" src="https://github.com/user-attachments/assets/7d303fd6-a733-4348-b01a-4f182c45e969" />
+
+As we can see, every ICMP packet has a packet that includes the suspicious first 2 letters and the rest of repeated letters. Maybe the letters excepting first 2 letters, are not really important.
+
+We convert every 2 letters (representing two hex values) of all ICMP packets into ASCII values and merge all of it by using `tshark`.
+
+```bash
+$ tshark -r challenge.pcap -Y "icmp" -T fields -e data.data | cut -c1-2 | uniq | xxd -r -p
+Result: sneaky_network
+```
+
+Now, we have the passphrase, which is named `sneaky_network`. Using that to decrypt the secret data from the picture and finally get a flag.
+```bash
+$ steghide extract -p "sneaky_network" -sf hello.jpg
+wrote extracted data to "flag.txt".
+
+$ cat flag.txt
+W1{1t's_n0t_that_hard_t0_solve_th1s_r1ght?_(*^_^*)}
+```
 
 
 
